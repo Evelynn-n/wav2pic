@@ -2,7 +2,7 @@ import os
 import numpy as np
 import random
 from matplotlib.image import imread
-from utils.loadder import *
+from utils.common import *
 from wav_process.wave_processing import *
 
 

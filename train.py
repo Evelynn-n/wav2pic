@@ -6,7 +6,7 @@ import numpy as np
 from tqdm import tqdm
 from network import VGGLoss, GAN_Network
 from readdata import Get_Data
-
+from utils.common import plot_generate_image
 image_shape = (144,256,3)
 input_shape = (441,399,1)
 adam = Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
@@ -53,15 +53,19 @@ def train(batch_size,epochs):
             gan_Y = np.ones(batch_size) - np.random.random_sample(batch_size) * 0.2
             dis.trainable=False
             gan_loss = gan.train_on_batch(gen_x, [gen_y, gan_Y])
+
         print("discriminator_loss : %f" % discriminator_loss)
         print("gan_loss :", gan_loss)
+        plot_generate_image(gen,gen_x[0],gen_y[0],i)
         loss_file = open('losses.txt', 'a')
-        loss_file.write('epoch%d : gan_loss = %s ; discriminator_loss = %f\n' % (e, gan_loss, discriminator_loss))
+        loss_file.write('epoch%d : gan_loss = %s ; discriminator_loss = %f\n' % (i, gan_loss, discriminator_loss))
         loss_file.close()
+        generator.save('gen_model%d.h5' % i)
+        dis.save('dis_model%d.h5' % i)
 
-        if i % 20 == 0:
-            generator.save( 'gen_model%d.h5' %i)
-            dis.save('dis_model%d.h5' % i)
+        # if i % 5 == 0:
+        #     generator.save( 'gen_model%d.h5' %i)
+        #     dis.save('dis_model%d.h5' % i)
 
 
 
