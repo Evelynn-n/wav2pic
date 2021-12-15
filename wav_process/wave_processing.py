@@ -15,10 +15,10 @@ def read_wav_data(filename):
     '''
     wav = wave.open(filename, "rb")  # 打开一个wav格式的声音文件流
     num_frame = wav.getnframes()  # 获取帧数
-    print(num_frame)
+    # print(num_frame)
     num_channel = wav.getnchannels()  # 获取声道数
     framerate = wav.getframerate()  # 获取帧速率
-    print(framerate)
+    # print(framerate)
     num_sample_width = wav.getsampwidth()  # 获取实例的比特宽度，即每一帧的字节数
     str_data = wav.readframes(num_frame)  # 读取全部的帧
     wav.close()  # 关闭流
@@ -101,7 +101,7 @@ def GetFrequencyFeature(wavsignal, fs):
 
 
 if (__name__ == '__main__'):
-    wave_data, fs = read_wav_data('125_.wav')
+    wave_data, fs = read_wav_data('wav/15_.wav')
     wav_show(wave_data[0], fs)
     t0 = time.time()
     # freimg = GetMfccFeature(wave_data, fs)
