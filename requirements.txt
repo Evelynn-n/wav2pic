@@ -1,0 +1,6 @@
+tensorflow
+tqdm
+matplotlib
+numpy
+scipy
+python_speech_features
