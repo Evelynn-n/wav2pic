@@ -31,6 +31,7 @@ inputs = Input(freimg.shape)
 loss = VGGLoss(freimg.shape)
 x = GAN_Network()
 gen = x.GAN_G(inputs)
+
 des = x.GAN_D(images)
 gen.compile(loss = loss.vgg_loss,optimizer=adam)
 des.compile(loss = "binary_crossentropy",optimizer=adam)

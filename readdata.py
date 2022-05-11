@@ -22,8 +22,10 @@ class Get_Data():
         wname = self.dic_wav_list[self.dic_wav_num[n_start]]
         lname = self.dic_label_list[self.dic_wav_num[n_start]]
         wavsignal,fs = read_wav_data(wname)
-        data_input = GetFrequencyFeature(wavsignal, fs)
-        data_input = data_input.T
+        data_input1 = GetMfccFeature(wavsignal, fs)
+        data_input2 = GetFrequencyFeature(wavsignal, fs)
+        data_input = np.append(data_input1,data_input2,axis=1)
+        # data_input = data_input.T
         data_input = data_input.reshape(data_input.shape[0], data_input.shape[1], 1)
         data_label = imread(lname)
         return data_input,data_label,wname
@@ -31,7 +33,7 @@ class Get_Data():
 
     def data_generator(self,batch_size=8):
         while True:
-            inputs = np.zeros((batch_size, 441, 399, 1), dtype=float)
+            inputs = np.zeros((batch_size, 400, 480, 1), dtype=float)
             outputs = np.zeros((batch_size, 144, 256, 3), dtype=int)
             for i in range(batch_size):
                 rand_num = random.randint(0, self.data_num - 1)

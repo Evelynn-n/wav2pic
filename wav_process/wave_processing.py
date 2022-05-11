@@ -31,11 +31,12 @@ def read_wav_data(filename):
 
 def GetMfccFeature(wavsignal, fs):
     # 获取输入特征
-    feat_mfcc = mfcc(wavsignal[0], fs)
+    feat_mfcc = mfcc(wavsignal[0], fs,nfft=1103)
     feat_mfcc_d = delta(feat_mfcc, 2)
     feat_mfcc_dd = delta(feat_mfcc_d, 2)
     # 返回值分别是mfcc特征向量的矩阵及其一阶差分和二阶差分矩阵
     wav_feature = np.column_stack((feat_mfcc, feat_mfcc_d, feat_mfcc_dd))
+    # wav_feature = np.pad(wav_feature,(0,1),'constant', constant_values=(0))
     return wav_feature
 
 
@@ -97,18 +98,24 @@ def GetFrequencyFeature(wavsignal, fs):
         data_input[i] = data_line[0: int(window_length // 2)]  # 设置为882除以2的值（即441）是取一半数据，因为是对称的
         # print(data_input.shape)
     data_input = np.log(data_input + 1)
+    # data_input = np.pad(data_input, (0, 1), 'constant', constant_values=(0))
     return data_input
 
 
 if (__name__ == '__main__'):
-    wave_data, fs = read_wav_data('wav/15_.wav')
-    wav_show(wave_data[0], fs)
+    wave_data, fs = read_wav_data('wav/1709_.wav')
+    # wav_show(wave_data[0], fs)
     t0 = time.time()
-    # freimg = GetMfccFeature(wave_data, fs)
-    freimg = GetFrequencyFeature(wave_data, fs)
+    freimg1 = GetMfccFeature(wave_data, fs)
+    freimg2 = GetFrequencyFeature(wave_data, fs)
     t1 = time.time()
     print('time cost:', t1 - t0)
-    freimg = freimg.T
+    # freimg1 = freimg1.T
+    # freimg2 = freimg2.T
+    freimg = np.append(freimg1,freimg2,axis=1)
+    freimg = np.pad(freimg, ((0,1),(0, 0)), 'mean')
+    print(freimg1.shape)
+    print(freimg2.shape)
     print(freimg.shape)
     plt.subplot(111)
     plt.imshow(freimg)
