@@ -16,11 +16,11 @@ def get_gan_network(discriminator, shape, generator, optimizer, vgg_loss):
     gan_input = Input(shape=shape)
     x = generator(gan_input)
     gan_output = discriminator(x)
-    gan = Model(inputs=gan_input, outputs=[x,gan_output])
+    gan = Model(inputs=gan_input, outputs=[x,gan_output],)
     gan.compile(loss=[vgg_loss, "binary_crossentropy"],
                 loss_weights=[1., 1e-3],
                 optimizer=optimizer)
-    gan.run_eagerly = True
+    # gan.run_eagerly = True
 
     return gan
 
@@ -42,25 +42,30 @@ def train(batch_size,epochs):
 
     for i in range(1,epochs+1):
         print('-' * 15, 'Epoch %d' % i, '-' * 15)
-        for _ in tqdm(range(length//batch_size)):
-            feature = generator.__next__()
-            gen_x = feature[0]
-            gen_y = feature[1]
-            # real_data_Y = np.ones(batch_size) - np.random.random_sample(batch_size) * 0.2
-            # fake_data_Y = np.random.random_sample(batch_size) * 0.2
-            # gen_pred = gen.predict(gen_x)
-            # dis.trainable = True
-            # d_loss_real = dis.train_on_batch(gen_y,real_data_Y)
-            # d_loss_fake = dis.train_on_batch(gen_pred, fake_data_Y)
-            # discriminator_loss = 0.5 * np.add(d_loss_fake, d_loss_real)
-            # gan_Y = np.ones(batch_size) - np.random.random_sample(batch_size) * 0.2
-            # dis.trainable=False
-            # gan_loss = gen.train_on_batch(gen_x, [gen_y, gan_Y])
-            gan_loss = gan.train_on_batch(gen_x, gen_y)
+        # for _ in tqdm(range(length//batch_size)):
+        #
+        #     feature = generator.__next__()
+        #     gen_x = feature[0]
+        #     gen_y = feature[1]
+        #     # real_data_Y = np.ones(batch_size) - np.random.random_sample(batch_size) * 0.2
+        #     # fake_data_Y = np.random.random_sample(batch_size) * 0.2
+        #     # gen_pred = gen.predict(gen_x)
+        #     # dis.trainable = True
+        #     # d_loss_real = dis.train_on_batch(gen_y,real_data_Y)
+        #     # d_loss_fake = dis.train_on_batch(gen_pred, fake_data_Y)
+        #     # discriminator_loss = 0.5 * np.add(d_loss_fake, d_loss_real)
+        #     # gan_Y = np.ones(batch_size) - np.random.random_sample(batch_size) * 0.2
+        #     # dis.trainable=False
+        #     # gan_loss = gen.train_on_batch(gen_x, [gen_y, gan_Y])
+        #     gan_loss = gan.train_on_batch(gen_x, gen_y)
 
+        gan_loss = gen.fit_generator(generator,steps_per_epoch=(length//batch_size),callbacks=t)
         # print("discriminator_loss : %f" % discriminator_loss)
         print("gan_loss :", gan_loss)
         ran = np.random.randint(0,batch_size-1)
+        feature = generator.__next__()
+        gen_x = feature[0]
+        gen_y = feature[1]
         plot_generate_image(gen,gen_x[ran],gen_y[ran],i)
         loss_file = open('losses.txt', 'a')
         loss_file.write('epoch%d : gan_loss = %s ; discriminator_loss = %f\n' % (i, gan_loss))
