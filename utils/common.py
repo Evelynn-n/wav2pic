@@ -19,17 +19,22 @@ def get_wav_list(filename):
 # y = get_wav_list('../data/train.txt')
 path = 'outputs'
 def plot_generate_image(generator,pred_data,origin_data,epoch):
-    outputs = generator.predit(pred_data)
-    plt.figure(figsize=(15,5))
+    plt.figure(figsize=(15, 5))
+    plt.subplot(1, 3, 1)
+    plt.imshow(pred_data, interpolation='nearest')
+    plt.axis('off')
+    pred_data = pred_data.reshape(1, 400, 480, 1)
+    outputs = generator.predict(pred_data)
+    outputs = outputs[0].astype('uint8')
 
-    plt.subplot(1, 2, 1)
-    plt.imshow(outputs[0], interpolation='nearest')
+    plt.subplot(1, 3, 2)
+    plt.imshow(outputs, interpolation='nearest')
     plt.axis('off')
 
-    plt.subplot(1, 2, 2)
+    plt.subplot(1, 3, 3)
     plt.imshow(origin_data, interpolation='nearest')
     plt.axis('off')
     if not os.path.exists(path):
         os.makedirs(path)
-    plt.savefig( path+'/generated_image_%d.png' % epoch)
+    plt.savefig(path + '/generated_image_%d.png' % epoch)
     plt.show()
